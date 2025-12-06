@@ -25,22 +25,48 @@ const rules = [
   'Have fun and be creative!'
 ];
 
-// Hier kannst du dein Script ändern
-const scriptCode = `test`;
+// Hier kannst du deine Scripts hinzufügen
+const scripts = [
+  {
+    id: 1,
+    name: 'Developer Script Hub',
+    code: `-- // Developer Script Hub (Mobile-Friendly)
+-- Place in StarterGui > ScreenGui > LocalScript
+-- Safe for developer/admin use only (not exploits)
+
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer`
+  },
+  {
+    id: 2,
+    name: 'Admin Commands',
+    code: `-- Admin Commands Script
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+function teleport(targetName)
+    local target = Players:FindFirstChild(targetName)
+    if target then
+        player.Character:MoveTo(target.Character.HumanoidRootPart.Position)
+    end
+end`
+  },
+  {
+    id: 3,
+    name: 'Speed Boost',
+    code: `-- Speed Boost Script
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+humanoid.WalkSpeed = 50
+print("Speed boosted to 50!")`
+  }
+];
 
 export function ServerInfo({ staff, channels, isLoading }: ServerInfoProps) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(scriptCode);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy:', err);
-    }
-  };
-
   return (
     <section className="relative py-20 px-6 pb-32">
       <div className="max-w-6xl mx-auto">
@@ -99,29 +125,16 @@ export function ServerInfo({ staff, channels, isLoading }: ServerInfoProps) {
               <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700">
                 <Code className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-2xl">Lua Script</h3>
-              <button
-                onClick={handleCopy}
-                className="ml-auto flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition-colors duration-200"
-              >
-                {copied ? (
-                  <>
-                    <Check className="w-4 h-4" />
-                    Copied!
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4" />
-                    Copy
-                  </>
-                )}
-              </button>
+              <h3 className="text-2xl">Lua Scripts</h3>
+              <span className="ml-auto text-sm text-gray-500 dark:text-gray-400">
+                {scripts.length} scripts
+              </span>
             </div>
             
-            <div className="relative">
-              <pre className="text-sm text-gray-800 dark:text-gray-200 bg-black/10 dark:bg-black/30 rounded-lg p-4 overflow-x-auto max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/30 scrollbar-track-transparent">
-                <code>{scriptCode}</code>
-              </pre>
+            <div className="max-h-[400px] overflow-y-auto pr-2 space-y-3 scrollbar-thin scrollbar-thumb-purple-500/30 scrollbar-track-transparent hover:scrollbar-thumb-purple-500/50">
+              {scripts.map((script, index) => (
+                <ScriptTab key={script.id} script={script} index={index} />
+              ))}
             </div>
           </motion.div>
         </div>
@@ -196,6 +209,67 @@ export function ServerInfo({ staff, channels, isLoading }: ServerInfoProps) {
         </motion.div>
       </div>
     </section>
+  );
+}
+
+interface ScriptTabProps {
+  script: {
+    id: number;
+    name: string;
+    code: string;
+  };
+  index: number;
+}
+
+function ScriptTab({ script, index }: ScriptTabProps) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(script.code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  // Verkürzt den Text wenn er zu lang ist
+  const truncateText = (text: string, maxLength: number) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  };
+
+  return (
+    <motion.div
+      className="rounded-lg bg-white/30 dark:bg-white/5 border border-gray-200/30 dark:border-white/10 p-4 hover:bg-white/40 dark:hover:bg-white/10 transition-all duration-200"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4, delay: Math.min(index * 0.1, 0.5) }}
+    >
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <div className="flex-1 min-w-0">
+          <h4 className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">
+            {script.name}
+          </h4>
+          <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
+            {truncateText(script.code, 50)}
+          </p>
+        </div>
+        <button
+          onClick={handleCopy}
+          className="flex-shrink-0 p-2 rounded-md bg-purple-600 hover:bg-purple-700 text-white transition-colors duration-200"
+          title="Copy Script"
+        >
+          {copied ? (
+            <Check className="w-4 h-4" />
+          ) : (
+            <Copy className="w-4 h-4" />
+          )}
+        </button>
+      </div>
+    </motion.div>
   );
 }
 
