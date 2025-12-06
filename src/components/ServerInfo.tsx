@@ -18,11 +18,11 @@ interface ServerInfoProps {
 }
 
 const rules = [
-  'Leck eier Ryze 🖕',
+  'Leck eier Marvin 🖕',
   'Warum tu ich mir das überhaupt an?',
   'Bitte helf mir',
-  'Follow Discord Terms of Service',
-  'Have fun and be creative!'
+  'Follow Discord Terms of Service before you become a terrorist',
+  'Have fun and be creative in the ass of your girl'
 ];
 
 // Hier kannst du deine Scripts hinzufügen
