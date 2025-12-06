@@ -17,9 +17,9 @@ interface ServerInfoProps {
 }
 
 const rules = [
-  'Be respectful to all members',
-  'No spam or self-promotion',
-  'Keep content appropriate',
+  'Leck eier Ryze 🖕',
+  'Warum tu ich mir das überhaupt an?',
+  'Bitte helf mir',
   'Follow Discord Terms of Service',
   'Have fun and be creative!'
 ];
