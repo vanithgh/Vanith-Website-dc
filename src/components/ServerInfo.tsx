@@ -25,8 +25,6 @@ const rules = [
 ];
 
 export function ServerInfo({ staff, channels, isLoading }: ServerInfoProps) {
-  const displayChannels = channels?.slice(0, 6) || [];
-
   return (
     <section className="relative py-20 px-6 pb-32">
       <div className="max-w-6xl mx-auto">
@@ -73,7 +71,7 @@ export function ServerInfo({ staff, channels, isLoading }: ServerInfoProps) {
             </ul>
           </motion.div>
 
-          {/* Channels Section */}
+          {/* Channels Section - VERTIKALES SCROLLING */}
           <motion.div
             className="rounded-2xl bg-white/50 dark:bg-white/5 backdrop-blur-lg border border-gray-200/50 dark:border-white/10 p-8 shadow-xl"
             initial={{ opacity: 0, x: 30 }}
@@ -86,34 +84,52 @@ export function ServerInfo({ staff, channels, isLoading }: ServerInfoProps) {
                 <Hash className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-2xl">Popular Channels</h3>
+              {channels && channels.length > 0 && (
+                <span className="ml-auto text-sm text-gray-500 dark:text-gray-400">
+                  {channels.length} total
+                </span>
+              )}
             </div>
             
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="w-6 h-6 animate-spin text-purple-500" />
               </div>
-            ) : displayChannels.length === 0 ? (
+            ) : !channels || channels.length === 0 ? (
               <div className="text-center text-gray-500 dark:text-gray-400 py-8">
                 No channels available
               </div>
             ) : (
-              <div className="space-y-3">
-                {displayChannels.map((channel, index) => (
-                  <motion.div
-                    key={channel.id}
-                    className="flex items-center gap-3 p-3 rounded-lg bg-white/30 dark:bg-white/5 hover:bg-white/50 dark:hover:bg-white/10 transition-colors duration-200 cursor-pointer"
-                    initial={{ opacity: 0, x: 20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: index * 0.1 }}
-                    whileHover={{ x: 4 }}
-                  >
-                    <Hash className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                    <div className="flex-1">
-                      <div className="text-gray-800 dark:text-gray-200">{channel.name}</div>
-                    </div>
-                  </motion.div>
-                ))}
+              <div className="relative">
+                {/* Scrollbarer Bereich mit max-height */}
+                <div className="max-h-[400px] overflow-y-auto pr-2 space-y-3 scrollbar-thin scrollbar-thumb-purple-500/30 scrollbar-track-transparent hover:scrollbar-thumb-purple-500/50">
+                  {channels.map((channel, index) => (
+                    <motion.div
+                      key={channel.id}
+                      className="flex items-center gap-3 p-3 rounded-lg bg-white/30 dark:bg-white/5 hover:bg-white/50 dark:hover:bg-white/10 transition-colors duration-200 cursor-pointer"
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.5) }}
+                      whileHover={{ x: 4 }}
+                    >
+                      <Hash className="w-5 h-5 text-gray-600 dark:text-gray-400 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-gray-800 dark:text-gray-200 truncate">
+                          {channel.name}
+                        </div>
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-500 flex-shrink-0">
+                        #{channel.position}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+                
+                {/* Gradient Fade am Ende */}
+                {channels.length > 6 && (
+                  <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white/50 dark:from-gray-900/50 to-transparent pointer-events-none" />
+                )}
               </div>
             )}
           </motion.div>
