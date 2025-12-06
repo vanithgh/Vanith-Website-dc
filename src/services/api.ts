@@ -184,7 +184,12 @@ export interface DiscordData {
 
 export async function fetchDiscordData(): Promise<DiscordData> {
   try {
-    const response = await fetch(API_URL);
+    const response = await fetch(API_URL, {
+      headers: {
+        'ngrok-skip-browser-warning': 'true',
+        'User-Agent': 'VanithWebsite'
+      }
+    });
     if (!response.ok) {
       throw new Error('Failed to fetch Discord data');
     }
@@ -192,7 +197,6 @@ export async function fetchDiscordData(): Promise<DiscordData> {
   } catch (error) {
     console.error('Error fetching Discord data:', error);
     console.log('Using mock data as fallback');
-    // Return mock data when API is not available
     return MOCK_DATA;
   }
 }
