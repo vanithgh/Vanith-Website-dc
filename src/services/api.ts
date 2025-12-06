@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api/all';
+const API_URL = 'https://unmisanthropically-multiplicative-dorian.ngrok-free.dev/api/all';
 
 // Mock data for when API is not available
 const MOCK_DATA: DiscordData = {
