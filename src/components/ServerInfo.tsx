@@ -1,6 +1,7 @@
 import { motion } from 'motion/react';
-import { Shield, Hash, Crown, Users, Bot, Loader2 } from 'lucide-react';
+import { Shield, Code, Crown, Bot, Loader2, Copy, Check } from 'lucide-react';
 import { StaffMember } from '../services/api';
+import { useState } from 'react';
 
 interface ServerInfoProps {
   staff?: {
@@ -24,7 +25,22 @@ const rules = [
   'Have fun and be creative!'
 ];
 
+// Hier kannst du dein Script ändern
+const scriptCode = `test`;
+
 export function ServerInfo({ staff, channels, isLoading }: ServerInfoProps) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(scriptCode);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
   return (
     <section className="relative py-20 px-6 pb-32">
       <div className="max-w-6xl mx-auto">
@@ -71,7 +87,7 @@ export function ServerInfo({ staff, channels, isLoading }: ServerInfoProps) {
             </ul>
           </motion.div>
 
-          {/* Channels Section - VERTIKALES SCROLLING */}
+          {/* Script Section (ersetzt Channels) */}
           <motion.div
             className="rounded-2xl bg-white/50 dark:bg-white/5 backdrop-blur-lg border border-gray-200/50 dark:border-white/10 p-8 shadow-xl"
             initial={{ opacity: 0, x: 30 }}
@@ -81,57 +97,32 @@ export function ServerInfo({ staff, channels, isLoading }: ServerInfoProps) {
           >
             <div className="flex items-center gap-3 mb-6">
               <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700">
-                <Hash className="w-6 h-6 text-white" />
+                <Code className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-2xl">Popular Channels</h3>
-              {channels && channels.length > 0 && (
-                <span className="ml-auto text-sm text-gray-500 dark:text-gray-400">
-                  {channels.length} total
-                </span>
-              )}
+              <h3 className="text-2xl">Lua Script</h3>
+              <button
+                onClick={handleCopy}
+                className="ml-auto flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition-colors duration-200"
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-4 h-4" />
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4" />
+                    Copy
+                  </>
+                )}
+              </button>
             </div>
             
-            {isLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin text-purple-500" />
-              </div>
-            ) : !channels || channels.length === 0 ? (
-              <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-                No channels available
-              </div>
-            ) : (
-              <div className="relative">
-                {/* Scrollbarer Bereich mit max-height */}
-                <div className="max-h-[400px] overflow-y-auto pr-2 space-y-3 scrollbar-thin scrollbar-thumb-purple-500/30 scrollbar-track-transparent hover:scrollbar-thumb-purple-500/50">
-                  {channels.map((channel, index) => (
-                    <motion.div
-                      key={channel.id}
-                      className="flex items-center gap-3 p-3 rounded-lg bg-white/30 dark:bg-white/5 hover:bg-white/50 dark:hover:bg-white/10 transition-colors duration-200 cursor-pointer"
-                      initial={{ opacity: 0, x: 20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.5) }}
-                      whileHover={{ x: 4 }}
-                    >
-                      <Hash className="w-5 h-5 text-gray-600 dark:text-gray-400 flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <div className="text-gray-800 dark:text-gray-200 truncate">
-                          {channel.name}
-                        </div>
-                      </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-500 flex-shrink-0">
-                        #{channel.position}
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-                
-                {/* Gradient Fade am Ende */}
-                {channels.length > 6 && (
-                  <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white/50 dark:from-gray-900/50 to-transparent pointer-events-none" />
-                )}
-              </div>
-            )}
+            <div className="relative">
+              <pre className="text-sm text-gray-800 dark:text-gray-200 bg-black/10 dark:bg-black/30 rounded-lg p-4 overflow-x-auto max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/30 scrollbar-track-transparent">
+                <code>{scriptCode}</code>
+              </pre>
+            </div>
           </motion.div>
         </div>
 
