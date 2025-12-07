@@ -1,11 +1,31 @@
-import { motion } from 'motion/react';
-import { Users } from 'lucide-react';
+import { motion } from "motion/react";
+import { Users, Check } from "lucide-react";
+import { useState } from "react";
 
 interface HeroProps {
   memberCount?: number;
 }
 
+const DISCORD_INVITE = "https://discord.gg/274Nzf5kYH";
+
 export function Hero({ memberCount }: HeroProps) {
+  const [copied, setCopied] = useState(false);
+
+  const handleJoinDiscord = async () => {
+    try {
+      await navigator.clipboard.writeText(DISCORD_INVITE);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      
+      // Öffne Discord Link in neuem Tab
+      window.open(DISCORD_INVITE, '_blank');
+    } catch (err) {
+      console.error('Failed to copy:', err);
+      // Fallback: Öffne nur den Link
+      window.open(DISCORD_INVITE, '_blank');
+    }
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Animated Gradient Background */}
@@ -23,7 +43,7 @@ export function Hero({ memberCount }: HeroProps) {
         transition={{
           duration: 8,
           repeat: Infinity,
-          ease: "easeInOut"
+          ease: "easeInOut",
         }}
       />
       <motion.div
@@ -35,7 +55,7 @@ export function Hero({ memberCount }: HeroProps) {
         transition={{
           duration: 10,
           repeat: Infinity,
-          ease: "easeInOut"
+          ease: "easeInOut",
         }}
       />
 
@@ -67,11 +87,22 @@ export function Hero({ memberCount }: HeroProps) {
           className="space-y-6"
         >
           <motion.button
-            className="px-10 py-4 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-full shadow-lg shadow-purple-500/50 transition-all duration-300"
-            whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(139, 92, 246, 0.4)" }}
+            onClick={handleJoinDiscord}
+            className="px-10 py-4 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-full shadow-lg shadow-purple-500/50 transition-all duration-300 flex items-center gap-2 mx-auto"
+            whileHover={{
+              scale: 1.05,
+              boxShadow: "0 20px 40px rgba(139, 92, 246, 0.4)",
+            }}
             whileTap={{ scale: 0.95 }}
           >
-            Join Discord Server
+            {copied ? (
+              <>
+                <Check className="w-5 h-5" />
+                Invite Copied!
+              </>
+            ) : (
+              "Join Discord Server"
+            )}
           </motion.button>
 
           <motion.div
@@ -81,7 +112,9 @@ export function Hero({ memberCount }: HeroProps) {
             transition={{ duration: 0.8, delay: 0.6 }}
           >
             <Users className="w-5 h-5" />
-            <span>{memberCount ? memberCount.toLocaleString() : '...'} Members</span>
+            <span>
+              {memberCount ? memberCount.toLocaleString() : "..."} Members
+            </span>
           </motion.div>
         </motion.div>
       </div>
