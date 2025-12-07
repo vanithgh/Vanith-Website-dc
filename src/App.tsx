@@ -34,9 +34,11 @@ export default function App() {
     try {
       setError(null);
       const data = await fetchDiscordData();
+      console.log('Loaded Discord data:', data); // Debug log
       setDiscordData(data);
       setIsLoading(false);
     } catch (err) {
+      console.error('Failed to load Discord data:', err);
       setError('Failed to load Discord data');
       setIsLoading(false);
     }
@@ -62,7 +64,7 @@ export default function App() {
       <StatsSection data={discordData?.stats} isLoading={isLoading} error={error} />
       <ActivityFeed activities={discordData?.activities} isLoading={isLoading} />
       <ServerInfo 
-        staff={discordData?.staff} 
+        staff={discordData?.staff}
         channels={discordData?.channels} 
         isLoading={isLoading} 
       />
