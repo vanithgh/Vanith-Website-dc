@@ -19,7 +19,7 @@ interface ServerInfoProps {
 }
 
 const rules = [
-  'Leck eier Marvin 🖕',
+  'Leck eier Ryze du Reiskocher 🖕',
   'Warum tu ich mir das überhaupt an?',
   'Bitte helf mir',
   'Follow Discord Terms of Service before you become a terrorist',
