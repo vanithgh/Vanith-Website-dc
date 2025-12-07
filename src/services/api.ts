@@ -1,124 +1,27 @@
-const API_URL = 'https://unmisanthropically-multiplicative-dorian.ngrok-free.dev/api/all';
-//test
-// Mock data for when API is not available
+const API_URL = "https://unmisanthropically-multiplicative-dorian.ngrok-free.dev/api/all";
+
+// Mock data bleibt gleich...
 const MOCK_DATA: DiscordData = {
+  // ... (dein bisheriger Mock Data Code)
   stats: {
     totalMembers: 12847,
     onlineMembers: 3456,
-    messagesToday: 8923
+    messagesToday: 8923,
   },
-  activities: [
-    {
-      type: 'join',
-      user: 'NewUser123',
-      userId: '123',
-      displayName: 'NewUser123',
-      action: 'joined the server',
-      time: new Date(Date.now() - 120000).toISOString(),
-      avatar: 'https://cdn.discordapp.com/embed/avatars/0.png',
-      isBot: false
-    },
-    {
-      type: 'message',
-      user: 'AdminUser',
-      userId: '456',
-      displayName: 'AdminUser',
-      action: 'sent a message in #general',
-      time: new Date(Date.now() - 300000).toISOString(),
-      avatar: 'https://cdn.discordapp.com/embed/avatars/1.png',
-      content: 'Welcome to Vanith Community!',
-      channelName: 'general',
-      authorRole: 'Admin',
-      authorRoleColor: '#A855F7'
-    },
-    {
-      type: 'message',
-      user: 'Moderator',
-      userId: '789',
-      displayName: 'Moderator',
-      action: 'sent a message in #announcements',
-      time: new Date(Date.now() - 600000).toISOString(),
-      avatar: 'https://cdn.discordapp.com/embed/avatars/2.png',
-      content: 'New event starting this weekend! Join us for gaming sessions.',
-      channelName: 'announcements',
-      authorRole: 'Moderator',
-      authorRoleColor: '#A855F7',
-      mentions: [
-        {
-          id: '111',
-          username: 'User1',
-          avatar: 'https://cdn.discordapp.com/embed/avatars/3.png'
-        }
-      ],
-      hasMentions: true
-    }
-  ],
-  channels: [
-    { id: '1', name: 'general', position: 0 },
-    { id: '2', name: 'announcements', position: 1 },
-    { id: '3', name: 'gaming', position: 2 },
-    { id: '4', name: 'creative', position: 3 }
-  ],
-  roles: [
-    { id: '1', name: 'Admin', color: '#A855F7', memberCount: 5 },
-    { id: '2', name: 'Moderator', color: '#3B82F6', memberCount: 12 },
-    { id: '3', name: 'Member', color: '#9CA3AF', memberCount: 1200 }
-  ],
+  activities: [],
+  channels: [],
+  roles: [],
   staff: {
-    owner: [
-      {
-        id: '1',
-        username: 'Vanith Owner',
-        displayName: 'Vanith Owner',
-        avatar: 'https://cdn.discordapp.com/embed/avatars/4.png',
-        role: 'Owner',
-        roleColor: '#ef4444'
-      }
-    ],
-    moderators: [
-      {
-        id: '2',
-        username: 'Mod User1',
-        displayName: 'Mod User 1',
-        avatar: 'https://cdn.discordapp.com/embed/avatars/5.png',
-        role: 'Moderator',
-        roleColor: '#A855F7',
-        permissions: {
-          admin: false,
-          kick: true,
-          ban: true
-        }
-      },
-      {
-        id: '3',
-        username: 'Mod User2',
-        displayName: 'Mod User 2',
-        avatar: 'https://cdn.discordapp.com/embed/avatars/0.png',
-        role: 'Moderator',
-        roleColor: '#A855F7',
-        permissions: {
-          admin: true,
-          kick: true,
-          ban: true
-        }
-      }
-    ],
-    bots: [
-      {
-        id: '4',
-        username: 'Vanith Bot',
-        displayName: 'Vanith Bot',
-        avatar: 'https://cdn.discordapp.com/embed/avatars/1.png',
-        role: 'Bot',
-        roleColor: '#3b82f6'
-      }
-    ]
+    owner: [],
+    moderators: [],
+    bots: [],
+    members: [],
   },
-  timestamp: new Date().toISOString()
+  timestamp: new Date().toISOString(),
 };
 
 export interface Activity {
-  type: 'join' | 'leave' | 'message' | 'log';
+  type: "join" | "leave" | "message" | "log";
   user: string;
   userId: string;
   displayName: string;
@@ -149,6 +52,7 @@ export interface StaffMember {
   avatar: string;
   role: string;
   roleColor: string;
+  isServerOwner?: boolean;
   permissions?: {
     admin?: boolean;
     kick?: boolean;
@@ -178,25 +82,49 @@ export interface DiscordData {
     owner: StaffMember[];
     moderators: StaffMember[];
     bots: StaffMember[];
+    members: StaffMember[];
   };
   timestamp: string;
 }
 
 export async function fetchDiscordData(): Promise<DiscordData> {
+  console.log('[API] Fetching data from:', API_URL);
+  
   try {
     const response = await fetch(API_URL, {
+      method: 'GET',
       headers: {
         'ngrok-skip-browser-warning': 'true',
-        'User-Agent': 'VanithWebsite'
-      }
+        'User-Agent': 'VanithWebsite/1.0',
+        'Accept': 'application/json',
+      },
+      mode: 'cors', // Explizit CORS aktivieren
+      cache: 'no-cache', // Kein Caching
     });
+
+    console.log('[API] Response status:', response.status);
+    console.log('[API] Response headers:', response.headers);
+
     if (!response.ok) {
-      throw new Error('Failed to fetch Discord data');
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-    return await response.json();
+
+    const data = await response.json();
+    console.log('[API] Data received:', data);
+    
+    // Validierung: Prüfe ob staff.members existiert
+    if (!data.staff || !data.staff.members) {
+      console.warn('[API] Warning: staff.members is missing!');
+      data.staff = data.staff || {};
+      data.staff.members = [];
+    }
+
+    console.log('[API] Members count:', data.staff.members.length);
+    
+    return data;
   } catch (error) {
-    console.error('Error fetching Discord data:', error);
-    console.log('Using mock data as fallback');
+    console.error('[API] Error fetching Discord data:', error);
+    console.log('[API] Using mock data as fallback');
     return MOCK_DATA;
   }
 }
