@@ -77,7 +77,7 @@ export function Hero({ memberCount }: HeroProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Join our thriving community of creators, gamers, and friends
+          Join deiner Oma im Bett :D 👩‍🦳+🛌
         </motion.p>
 
         <motion.div
